@@ -12,10 +12,6 @@ const int BLUE=11;
 const int GREEN=10;
 char sentence='d';
 
-const int pir = 15;
-int pirStat=LOW;
-int val=0;
-
 
 #include <SPI.h>
 #include <Ethernet.h>    // W5500부터 Ethernet2 라이브러리를 사용.
@@ -45,7 +41,6 @@ void setup() {
   pinMode(ECHO, INPUT);
   pinMode(BUZZER, OUTPUT);
   pinMode(SW1, INPUT);
-  pinMode(pir, INPUT);
   pinMode(RED, OUTPUT);
   pinMode(GREEN, OUTPUT);
   pinMode(BLUE, OUTPUT);
@@ -108,19 +103,6 @@ void loop() {
   int switch_in = digitalRead(SW1); //check if the door is open
   int switch_state = 0; // door is initially CLOSED
 
-  val=digitalRead(pir); //check if there is motion
-  if (val == HIGH) {           // check if the sensor is HIGH
-    if (pirStat == LOW) {
-      Serial.println("Motion detected!"); 
-      pirStat = HIGH;       // update variable state to HIGH
-    }
-  } 
-  else {
-      if (pirStat == HIGH){
-        Serial.println("Motion stopped!");
-        pirStat = LOW;       // update variable state to LOW
-    }
-  }
 
   //Making a Pulse and calculating distance
 
@@ -143,8 +125,12 @@ void loop() {
     switch_state = 1;
     //indicates whether receiver is ready to get the parcel(=DOOR OPEN)
   }
+  else{
+    switch_state = 0;
+    //(=DOOR closed)
+  }
   
-  if(dist < 30 && pirStat==HIGH){ //DELIVERY ARRIVED
+  if(dist < 30 ){ //DELIVERY ARRIVED
     parcel = 1;
     sentence='Your package has arrived!';
     Serial.println("Your package has arrived!");
@@ -171,7 +157,7 @@ void loop() {
   int theft_happened = 0; //Show if theft happened
 
   if(switch_state ==0){ //when door is closed
-    if(parcel ==1 && (dist > 30  || pirStat==LOW )) {//THEFT!
+    if(parcel ==1 && (dist > 30 ) {//THEFT!
       
       //send message to phone
 
@@ -185,6 +171,7 @@ void loop() {
     Serial.println("Someone stole your package!!");
     if(switch_state ==1){ //Owner has arrived
       theft_happened = 0; //Reset to normal
+      parcel =0;
     }
     
   }
