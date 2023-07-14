@@ -17,7 +17,8 @@ int theft_happened = 0; //Show if theft happened
 
 int msg_sent = 0; //message sent or not
 int msg_number = 0; // total sent message amount
-const int msg_MAX = 3; // max. message
+int show_msg = 0;
+const int msg_MAX = 20; // max. message
 
 
 #include <Arduino.h>
@@ -126,7 +127,7 @@ void loop() {
       
 
       sentence='Someone stole your package!!';
-      Serial.println("Someone stole your package!!");
+      //Serial.println("Someone stole your package!!");
 
 
 
@@ -134,11 +135,15 @@ void loop() {
               //send message to phone
         if(msg_sent ==0){
         Serial2.write("AT");
-        char c3= Serial2.read();
-        Serial.write(c3);
+        show_msg = 0;
+        while( show_msg < 20){
+          char c3= Serial2.read();
+          Serial.write(c3);
+          show_msg +=1;
+        }
         msg_sent =1;
         msg_number +=1;
-        delay(10000);
+        delay(1000);
         }
       }
 
@@ -184,18 +189,30 @@ void loop() {
    }  
   }
 
-  delay(2500);
+delay(1000);
 
   if(Serial.available())
   {
-    char c=  Serial.read();
-    Serial2.write(c);
-    Serial.print(c);
+    show_msg = 0;
+        while( show_msg < 20){
+          char c=  Serial.read();
+          Serial2.write(c);
+          Serial.print(c);
+
+
+          show_msg +=1;
+        }
+        
   }
   if(Serial2.available())
   {
-    char c2 = Serial2.read();
-    Serial.write(c2);
+        show_msg = 0;
+        while( show_msg < 20){
+          char c2 = Serial2.read();
+          Serial.write(c2);
+
+          show_msg +=1;
+        }
   }
 
   
