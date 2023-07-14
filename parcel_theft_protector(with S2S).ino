@@ -13,6 +13,12 @@ const int GREEN=10;
 char sentence='d';
 int switch_state = 0; // door is initially CLOSED
 int parcel = 0; //indicates parcel exists or not
+int theft_happened = 0; //Show if theft happened
+
+int msg_sent = 0; //message sent or not
+int msg_number = 0; // total sent message amount
+const int msg_MAX = 3; // max. message
+
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -40,8 +46,13 @@ void setup() {
   digitalWrite(RED, HIGH);
   digitalWrite(GREEN, HIGH);
   digitalWrite(BLUE, HIGH);
+
   parcel = 0;
   switch_state = 0; 
+  theft_happened = 0; 
+  msg_sent = 0; //message sent or not
+  msg_number = 0; // total sent message amount
+
 }
 
 void loop() {
@@ -70,15 +81,17 @@ void loop() {
   
   float T_ultrason = pulseIn(ECHO, HIGH);
   float dist = T_ultrason * 343* 0.0001/2;
-  Serial.println("----------");
+  
+  /*Serial.println("----------");
   Serial.print(dist);
   Serial.println(" cm  ");
   Serial.println("----------");
+  */
 
   if(dist < 30 ){ //DELIVERY ARRIVED
     parcel = 1;
     sentence='Your package has arrived!';
-    Serial.println("Your package has arrived!");
+    //Serial.println("Your package has arrived!");
     digitalWrite(GREEN, LOW);
     delay(100);
     digitalWrite(GREEN, HIGH);
@@ -93,33 +106,49 @@ void loop() {
 
   // CHECKING STATUS
   
-  Serial.print("Your package"); //Shows if package is exists
+  /*Serial.print("Your package"); //Shows if package is exists
   if(parcel ==1){Serial.println(" is available");}
   else{Serial.println(" don't exists");}
 
   Serial.print("Door: "); //Show if switch is on(=DOOR OPEN)
   if (switch_state == 1) {Serial.println(" Open"); }
   else {Serial.println(" Closed"); }
+  */
   
   
   //CHECKING THEFT
 
-  int theft_happened = 0; //Show if theft happened
+
+
 
   if(switch_state ==0){ //when door is closed
     if(parcel ==1 && dist > 10 ) {//THEFT!
       
-      //send message to phone
 
       sentence='Someone stole your package!!';
       Serial.println("Someone stole your package!!");
+
+
+
+      if(msg_number < msg_MAX){
+              //send message to phone
+        if(msg_sent ==0){
+        Serial2.write("AT");
+        char c3[50] = Serial2.read();
+        Serial.write(c3);
+        msg_sent =1;
+        delay(10000);
+        }
+      }
+
+
       theft_happened =1;
       digitalWrite(RED, LOW);
     }
   }
 
   if(  theft_happened ==1){ //Theft message stays until door is OPEN
-    Serial.println("Someone stole your package!!");
+
 
     
     if(switch_state ==1){ //Owner has arrived
@@ -147,7 +176,7 @@ void loop() {
         digitalWrite(BLUE, LOW);
         delay(500);
         digitalWrite(BLUE, HIGH);
-
+        msg_sent = 0;
         digitalWrite(RED, HIGH);
 
       }
@@ -158,13 +187,13 @@ void loop() {
 
   if(Serial.available())
   {
-    char c = Serial.read();
+    char c[50] = Serial.read();
     Serial2.write(c);
     Serial.print(c);
   }
   if(Serial2.available())
   {
-    char c2 = Serial2.read();
+    char c2[50] = Serial2.read();
     Serial.write(c2);
   }
 
