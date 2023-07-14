@@ -134,6 +134,14 @@ void loop() {
     parcel = 1;
     sentence='Your package has arrived!';
     Serial.println("Your package has arrived!");
+    digitalWrite(GREEN, low);
+    delay(100);
+    digitalWrite(GREEN, high);
+    delay(100);
+    digitalWrite(GREEN, low);
+    delay(100);
+    digitalWrite(GREEN, high);
+    
 
     //send message to phone
   }
@@ -169,9 +177,13 @@ void loop() {
 
   if(  theft_happened ==1){ //Theft message stays until door is OPEN
     Serial.println("Someone stole your package!!");
+    digitalWrite(RED, low);
+    
     if(switch_state ==1){ //Owner has arrived
       theft_happened = 0; //Reset to normal
       parcel =0;
+      digitalWrite(RED, high);
+    
     }
     
   }
@@ -185,6 +197,15 @@ void loop() {
         switch_state=0;
         sentence='You receievd package.';
         Serial.println("You receievd package.");
+        digitalWrite(BLUE, low);
+        delay(500);
+        digitalWrite(BLUE, High);
+        delay(500);
+        digitalWrite(BLUE, low);
+        delay(500);
+        digitalWrite(BLUE, high);
+
+        
 
       }
    }  
@@ -192,7 +213,7 @@ void loop() {
   //Serial.print(dist);
   //Serial.println(" cm  ");
   
-  delay(2500);
+  delay(1000);
 }
 
 
