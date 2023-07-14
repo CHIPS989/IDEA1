@@ -188,13 +188,13 @@ void loop() {
 
   if(Serial.available())
   {
-    char c[50] =  Serial.read();
+    char c=  Serial.read();
     Serial2.write(c);
     Serial.print(c);
   }
   if(Serial2.available())
   {
-    char c2[50] = Serial2.read();
+    char c2 = Serial2.read();
     Serial.write(c2);
   }
 
