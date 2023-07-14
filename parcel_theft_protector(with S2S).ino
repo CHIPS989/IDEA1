@@ -134,7 +134,8 @@ void loop() {
               //send message to phone
         if(msg_sent ==0){
         Serial2.write("AT");
-        char c3[50] = Serial2.read();
+        char c3[50] = {0,};
+        c3 = Serial2.read();
         Serial.write(c3);
         msg_sent =1;
         delay(10000);
@@ -187,13 +188,15 @@ void loop() {
 
   if(Serial.available())
   {
-    char c[50] = Serial.read();
+    char c[50] = {0,};
+    c = Serial.read();
     Serial2.write(c);
     Serial.print(c);
   }
   if(Serial2.available())
   {
-    char c2[50] = Serial2.read();
+    char c2[50] = {0,};
+    c2 = Serial2.read();
     Serial.write(c2);
   }
 
